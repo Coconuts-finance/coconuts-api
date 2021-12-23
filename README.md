@@ -15,7 +15,8 @@ POLYGONSCAN_API= // your key from https://polygonscan.com/myapikey
 POLYGONRPC_APPID= // your key from https://rpc.maticvigil.com/
 ETHERSCAN_API=
 BSCSCAN_API=
-FTMSCAN_API=```
+FTMSCAN_API=
+```
 
 ## To Run
 
