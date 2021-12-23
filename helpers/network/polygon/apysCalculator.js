@@ -92,9 +92,9 @@ async function getApysCalculation() {
 			tvlUsd: tvlUsd,
 			__v: 0,
 			apiVersion: apiVersion,
-			depositLimit: depositLimit,
-			availableDepositLimit: availableDepositLimit,
-			totalAssets: totalAssets,
+			//depositLimit: depositLimit,
+			//availableDepositLimit: availableDepositLimit,
+			//totalAssets: totalAssets,
 		}
 
 		// Calculate APY informations.
