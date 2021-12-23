@@ -1,0 +1,13 @@
+{
+  "cachebuster": "10",
+  "prices": {
+    "WMATIC": 2.56,
+    "WETH": 3967.81,
+    "WBTC": 48974,
+    "USDT": 1,
+    "DAI": 1,
+    "USDC": 1,
+    "ACUSDC": 1,
+    "KLIMA": 321.99
+  }
+}
