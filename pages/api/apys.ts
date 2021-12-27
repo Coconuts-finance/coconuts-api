@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import Cors from 'cors';
 import { ApysManager } from "../../helpers/apysManager";
+import Cors from 'cors';
 
 /**
  * Allowed cors methods.
  */
 const cors = Cors({
-  methods: ['GET'],
+  methods: ['GET', 'POST', 'HEAD'],
 });
 
 /**
@@ -48,19 +48,20 @@ const storeAccess = {};
  * @returns
  */
 async function handler(req:NextApiRequest, res:NextApiResponse) {
+  console.log('one');
   // Run the middleware
   await runMiddleware(req, res, cors);
-
+  console.log('two');
   // Exit if method differs from GET.
   if (req.method !== 'GET') {
     res.status(405).send({ message: 'Only GET requests allowed' })
     return;
   }
-
+  console.log('three');
   // Retrieve query parameters.
   let {network, cachebuster, revalidate} = req.query;
   network = String(network);
-
+  console.log('four : ' + network);
   // Build current timestamp to compare with last access.
 	const	now = new Date().getTime();
 	const	lastAccess = storeAccess[network] || 0;
@@ -70,12 +71,14 @@ async function handler(req:NextApiRequest, res:NextApiResponse) {
       || revalidate === 'true'
       || !storeAccess[network]) {
 
+    console.log('revaildate');
     // Retrieve vaults APY's and store it for further requests.
     let data = await ApysManager.getData(network, cachebuster);
 
     store[network] = data;
     storeAccess[network] = now;
   }
+  console.log('response');
   res.setHeader('Cache-Control', 's-maxage=600');
   res.status(200).json(store[network]);
 }

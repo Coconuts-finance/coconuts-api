@@ -1,5 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { rmSync } from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
 import { PricesRepo } from "../../helpers/pricesRepo";
 import Cors from 'cors';
@@ -37,6 +35,7 @@ async function handler(req:NextApiRequest, res:NextApiResponse) {
   return new Promise<void>((resolve, reject) => {
     PricesRepo.getPrices(query.cachebuster)
     .then(response => {
+      response['TEST'] = 0;
       res.status(200).json(response);
       resolve();
     })
