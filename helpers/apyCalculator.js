@@ -2,7 +2,11 @@ import { ethers } from 'ethers';
 import	Web3Contract from	'web3-eth-contract';
 import { EthProvider } from '../utils/ethProvider';
 
-
+/**
+ * Calculate the Apy with web3 informations.
+ * @param {} param0
+ * @returns
+ */
 async function calculateApy({network, abi, vault, pricePerShare, decimals, activation}) {
   const activationTimestamp = Number(activation);
 
@@ -20,7 +24,7 @@ async function calculateApy({network, abi, vault, pricePerShare, decimals, activ
   const oneMonthAgo = (new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).valueOf() / 1000).toFixed(0);
 
   const	currentPrice = ethers.utils.formatUnits(pricePerShare, decimals.toNumber());
-
+  //console.log('current price : ' + currentPrice);
   let apy = [
     {day: 'today', _day: 0, timestamp: today, status: ''},
     {day: 'yesterday', _day: 1, timestamp: oneDayAgo, status: ''},
@@ -37,8 +41,6 @@ async function calculateApy({network, abi, vault, pricePerShare, decimals, activ
   else if (activationTimestamp > oneMonthAgo) counter = 4;
 
   let calls = [];
-
-  //console.log(vault.name + " :: counter = " + counter);
 
   Web3Contract.setProvider(EthProvider.getWeb3Provider(network));
 
@@ -62,7 +64,7 @@ async function calculateApy({network, abi, vault, pricePerShare, decimals, activ
       apy[i].roi = roi;
       apy[i].apy = 0;
 
-      if (roi) {
+      //if (roi) {
         if (apy[i]._day == 0) {
           apy[i].apy = (roi / diff * 365);
           apy[i].readableApy = `${((roi * 100) / diff * 365).toFixed(2)}%`;
@@ -71,7 +73,7 @@ async function calculateApy({network, abi, vault, pricePerShare, decimals, activ
           apy[i].apy = (roi / apy[i]._day * 365);
           apy[i].readableApy = `${((roi * 100) / apy[i]._day * 365).toFixed(2)}%`;
         }
-      }
+      //}
     }
   }
   return apy;

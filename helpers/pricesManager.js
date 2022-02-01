@@ -1,9 +1,11 @@
 import { vaults as polygonVaults } from "../utils/polygon/vaults/vaults";
+import { vaults as avalancheVaults } from "../utils/avalanche/vaults/vaults";
 import { stakes as polygonStakes } from "../utils/polygon/stake/stake";
 
 function getData(network) {
   const vaults = [
     polygonVaults,
+    avalancheVaults,
   ];
   let stakes = [
     polygonStakes,

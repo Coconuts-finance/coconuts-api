@@ -1,10 +1,11 @@
 import { ethers } from 'ethers';
 import	{Contract} from 'ethcall';
-import { vaults } from '../../../utils/polygon/vaults/vaults';
-import abi from '../../../utils/polygon/abi.json';
-import { EthProvider } from '../../../utils/ethProvider';
-import { calculateApy } from '../../apyCalculator';
-import { PricesRepo } from '../../pricesRepo';
+//import { vaults } from '../../utils/polygon/vaults/vaults';
+import { VaultsManager } from '../vaultsManager';
+import abi from '../../utils/polygon/abi.json';
+import { EthProvider } from '../../utils/ethProvider';
+import { calculateApy } from '../apyCalculator';
+import { PricesRepo } from '../pricesRepo';
 
 const chunk = (arr, size) => arr.reduce((acc, e, i) => (i % size ? acc[acc.length - 1].push(e) : acc.push([e]), acc), []);
 
@@ -15,21 +16,19 @@ async function asyncForEach(array, callback) {
 }
 
 
-async function getApysCalculation() {
-  const network = 137;
+async function getApysCalculation(network) {
   let provider = EthProvider.getProvider(network);
   const ethcallProvider = await EthProvider.newEthCallProvider(provider, network);
-
   const	_calls = [];
 	const _vaults = [];
 
+	const vaults = VaultsManager.getData(network, 'vaults');
   vaults.forEach(function(vault) {
+
     if (vault.status !== 'active') {
       return;
     }
-
     const contract = new Contract(vault.earnContractAddress, abi);
-
 		_calls.push(...[
 			contract.apiVersion(),
 			contract.depositLimit(),
@@ -40,11 +39,9 @@ async function getApysCalculation() {
 			contract.activation(),
 		]);
   });
-
 	const	callResult = await ethcallProvider.all(_calls);
 	const	chunkedCallResult = chunk(callResult, 7);
 	let	index = 0;
-
 	await asyncForEach(Object.entries(vaults), async ([key, vault]) => {
 		/*if (vault.type === 'weird') {
 			return;
@@ -65,7 +62,6 @@ async function getApysCalculation() {
 		const	dec = Number(decimals);
 
 		const tokenPrice = await PricesRepo.getTokenPrice(vault.token);
-
 		const tvl = Number(ethers.utils.formatUnits(totalAssets, dec));
 		const tvlUsd = tvl * tokenPrice;
 		let vaultInfo = {

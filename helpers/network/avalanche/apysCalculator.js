@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import	{Contract} from 'ethcall';
-import { vaults } from '../../../utils/polygon/vaults/vaults';
-import abi from '../../../utils/polygon/abi.json';
+import { vaults } from '../../../utils/avalanche/vaults/vaults';
+import abi from '../../../utils/avalanche/abi.json';
 import { EthProvider } from '../../../utils/ethProvider';
 import { calculateApy } from '../../apyCalculator';
 import { PricesRepo } from '../../pricesRepo';
@@ -16,10 +16,9 @@ async function asyncForEach(array, callback) {
 
 
 async function getApysCalculation() {
-  const network = 137;
+  const network = 43114;
   let provider = EthProvider.getProvider(network);
   const ethcallProvider = await EthProvider.newEthCallProvider(provider, network);
-
   const	_calls = [];
 	const _vaults = [];
 
@@ -29,8 +28,7 @@ async function getApysCalculation() {
     }
 
     const contract = new Contract(vault.earnContractAddress, abi);
-
-		_calls.push(...[
+    _calls.push(...[
 			contract.apiVersion(),
 			contract.depositLimit(),
 			contract.totalAssets(),
@@ -40,7 +38,6 @@ async function getApysCalculation() {
 			contract.activation(),
 		]);
   });
-
 	const	callResult = await ethcallProvider.all(_calls);
 	const	chunkedCallResult = chunk(callResult, 7);
 	let	index = 0;
@@ -61,6 +58,7 @@ async function getApysCalculation() {
 			decimals,
 			activation
 		] = chunkedCallResult[index];
+
 
 		const	dec = Number(decimals);
 

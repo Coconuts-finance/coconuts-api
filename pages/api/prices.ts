@@ -35,7 +35,7 @@ async function handler(req:NextApiRequest, res:NextApiResponse) {
   return new Promise<void>((resolve, reject) => {
     PricesRepo.getPrices(query.cachebuster)
     .then(response => {
-      response['TEST'] = 0;
+      //response['TEST'] = 0;
       res.status(200).json(response);
       resolve();
     })
