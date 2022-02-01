@@ -1,6 +1,6 @@
 export const vaults = [
   {
-    id: 'avalanch-cnc-usdc',
+    id: 'avalanche-cnc-usdc',
     logo: 'single-assets/USDC.png',
     name: 'USDC',
     type: 'experimental',
