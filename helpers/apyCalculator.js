@@ -22,8 +22,9 @@ async function calculateApy({network, abi, vault, pricePerShare, decimals, activ
   const threeDayAgo = (new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).valueOf() / 1000).toFixed(0);
   const oneWeekAgo = (new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).valueOf() / 1000).toFixed(0);
   const oneMonthAgo = (new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).valueOf() / 1000).toFixed(0);
-  /*
+
   const format = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+  /*
   console.log('one : ' +  Intl.DateTimeFormat('en-US', format).format(oneDayAgo * 1000));
   console.log('two : ' +  Intl.DateTimeFormat('en-US', format).format(twoDayAgo * 1000));
   console.log('three : ' +  Intl.DateTimeFormat('en-US', format).format(threeDayAgo * 1000));
