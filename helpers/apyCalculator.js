@@ -22,16 +22,28 @@ async function calculateApy({network, abi, vault, pricePerShare, decimals, activ
   const threeDayAgo = (new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).valueOf() / 1000).toFixed(0);
   const oneWeekAgo = (new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).valueOf() / 1000).toFixed(0);
   const oneMonthAgo = (new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).valueOf() / 1000).toFixed(0);
-
+  /*
+  const format = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+  console.log('one : ' +  Intl.DateTimeFormat('en-US', format).format(oneDayAgo * 1000));
+  console.log('two : ' +  Intl.DateTimeFormat('en-US', format).format(twoDayAgo * 1000));
+  console.log('three : ' +  Intl.DateTimeFormat('en-US', format).format(threeDayAgo * 1000));
+  console.log('week : ' +  Intl.DateTimeFormat('en-US', format).format(oneWeekAgo * 1000));
+  console.log('month : ' +  Intl.DateTimeFormat('en-US', format).format(oneMonthAgo * 1000));
+  console.log('activation : ' +  Intl.DateTimeFormat('en-US', format).format(activationTimestamp * 1000));
+  console.log('one : ' + oneDayAgo);
+  */
   const	currentPrice = ethers.utils.formatUnits(pricePerShare, decimals.toNumber());
-  //console.log('current price : ' + currentPrice);
+  /*
+  console.log('current price : ' + currentPrice);
+  console.log('activation timestamp : ' + activationTimestamp);
+  */
   let apy = [
-    {day: 'today', _day: 0, timestamp: today, status: ''},
-    {day: 'yesterday', _day: 1, timestamp: oneDayAgo, status: ''},
-    {day: 'two days ago', _day: 2, timestamp: twoDayAgo, status: ''},
-    {day: 'three days ago', _day: 3, timestamp: threeDayAgo, status: ''},
-    {day: 'one week ago', _day: 7, timestamp: oneWeekAgo, status: ''},
-    {day: 'one month ago', _day: 30, timestamp: oneMonthAgo, status: ''},
+    {day: 'today', _day: 0, timestamp: today, date: Intl.DateTimeFormat('en-US', format).format(today * 1000), status: '', block: '', pricePerShare: ''},
+    {day: 'yesterday', _day: 1, timestamp: oneDayAgo, date: Intl.DateTimeFormat('en-US', format).format(oneDayAgo * 1000), status: '', block: '', pricePerShare: ''},
+    {day: 'two days ago', _day: 2, timestamp: twoDayAgo, date: Intl.DateTimeFormat('en-US', format).format(twoDayAgo * 1000), status: '', block: '', pricePerShare: ''},
+    {day: 'three days ago', _day: 3, timestamp: threeDayAgo, date: Intl.DateTimeFormat('en-US', format).format(threeDayAgo), status: '', block: '', pricePerShare: ''},
+    {day: 'one week ago', _day: 7, timestamp: oneWeekAgo, date: Intl.DateTimeFormat('en-US', format).format(oneWeekAgo * 1000), status: '', block: '', pricePerShare: ''},
+    {day: 'one month ago', _day: 30, timestamp: oneMonthAgo, date: Intl.DateTimeFormat('en-US', format).format(oneMonthAgo * 1000), status: '', block: '', pricePerShare: ''},
   ];
   let counter = 5;
   if (activationTimestamp > oneDayAgo)        counter = 0;
@@ -39,7 +51,7 @@ async function calculateApy({network, abi, vault, pricePerShare, decimals, activ
   else if (activationTimestamp > threeDayAgo) counter = 2;
   else if (activationTimestamp > oneWeekAgo)  counter = 3;
   else if (activationTimestamp > oneMonthAgo) counter = 4;
-
+  //console.log(counter);
   let calls = [];
 
   Web3Contract.setProvider(EthProvider.getWeb3Provider(network));
@@ -47,11 +59,13 @@ async function calculateApy({network, abi, vault, pricePerShare, decimals, activ
   for (const[i, currentApyData] of apy.entries()) {
     if (i <= counter) {
       const block = Number(await EthProvider.fetchBlockTimestamp(currentApyData.timestamp, network) || 0);
+      apy[i].block = block;
       calls.push(new Web3Contract(abi, vault.earnContractAddress).methods.pricePerShare().call(undefined, block));
     }
   }
 
   const data = await Promise.all(calls);
+  //console.log(data);
   for (const[i, pricePerShare] of data.entries()) {
     if (i <= counter) {
       apy[i].status = 'OK';
@@ -76,6 +90,7 @@ async function calculateApy({network, abi, vault, pricePerShare, decimals, activ
       //}
     }
   }
+  //console.log(apy);
   return apy;
 }
 

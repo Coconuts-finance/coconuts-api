@@ -28,7 +28,16 @@ async function getApysCalculation() {
     }
 
     const contract = new Contract(vault.earnContractAddress, abi);
-    _calls.push(...[
+		/*
+		console.log(contract.apiVersion());
+		console.log(contract.depositLimit());
+		console.log(contract.totalAssets());
+		console.log(contract.availableDepositLimit());
+		console.log(contract.pricePerShare());
+		console.log(contract.decimals());
+		console.log(contract.activation());
+		*/
+	_calls.push(...[
 			contract.apiVersion(),
 			contract.depositLimit(),
 			contract.totalAssets(),

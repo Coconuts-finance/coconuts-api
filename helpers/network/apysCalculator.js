@@ -1,8 +1,6 @@
 import { ethers } from 'ethers';
 import	{Contract} from 'ethcall';
-//import { vaults } from '../../utils/polygon/vaults/vaults';
 import { VaultsManager } from '../vaultsManager';
-import abi from '../../utils/polygon/abi.json';
 import { EthProvider } from '../../utils/ethProvider';
 import { calculateApy } from '../apyCalculator';
 import { PricesRepo } from '../pricesRepo';
@@ -16,7 +14,7 @@ async function asyncForEach(array, callback) {
 }
 
 
-async function getApysCalculation(network) {
+async function getApysCalculation(network, abi) {
   let provider = EthProvider.getProvider(network);
   const ethcallProvider = await EthProvider.newEthCallProvider(provider, network);
   const	_calls = [];
@@ -29,6 +27,7 @@ async function getApysCalculation(network) {
       return;
     }
     const contract = new Contract(vault.earnContractAddress, abi);
+
 		_calls.push(...[
 			contract.apiVersion(),
 			contract.depositLimit(),
@@ -58,7 +57,15 @@ async function getApysCalculation(network) {
 			decimals,
 			activation
 		] = chunkedCallResult[index];
-
+		/*
+		console.log(apiVersion);
+		console.log(depositLimit);
+		console.log(totalAssets);
+		console.log(availableDepositLimit);
+		console.log(pricePerShare);
+		console.log(decimals);
+		console.log(activation);
+		*/
 		const	dec = Number(decimals);
 
 		const tokenPrice = await PricesRepo.getTokenPrice(vault.token);
@@ -80,7 +87,7 @@ async function getApysCalculation(network) {
 			//availableDepositLimit: availableDepositLimit,
 			//totalAssets: totalAssets,
 		}
-
+		//console.log(vaultInfo);
 		// Calculate APY informations.
 		if (!vault.mimicApy) {
 			const calculation = await calculateApy({
